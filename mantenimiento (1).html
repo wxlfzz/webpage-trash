@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TR4$H</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #000;
+  --fg: #fff;
+  --dim: #999999;
+  --dimmer: #838383;
+  --border: #4d4d4d;
+  --accent: #b4b4b4;
+  --col-w: 560px;
+}
+
+html { background: var(--bg); }
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: 'Courier Prime', 'Courier New', monospace;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  align-items: stretch;
+  overflow-x: hidden;
+}
+
+/* ── NOISE OVERLAY ── */
+.noise {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: .025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px;
+}
+
+/* ── LAYOUT ── */
+.sidebar { display: none; }
+
+.main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 0;
+}
+
+.shell {
+  width: 100%;
+  max-width: var(--col-w);
+  min-height: 100vh;
+  padding: 3.5rem 2rem 5rem;
+  position: relative;
+}
+
+.content { position: relative; z-index: 1; }
+
+/* Desktop layout */
+@media (min-width: 900px) {
+  body { align-items: stretch; }
+
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 260px;
+    min-height: 100vh;
+    padding: 3.5rem 2.5rem;
+    border-right: .5px solid var(--border);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    flex-shrink: 0;
+  }
+
+  .sidebar-logo {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    margin-bottom: 3rem;
+  }
+  .sidebar-bottom {
+    font-size: 9px;
+    color: var(--dimmer);
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    line-height: 2;
+  }
+
+  .shell {
+    max-width: var(--col-w);
+    padding: 4rem 4rem 6rem;
+    border-right: .5px solid var(--border);
+  }
+}
+
+/* ── EYEBROW ── */
+.eyebrow {
+  font-size: 9px;
+  letter-spacing: .2em;
+  color: var(--dim);
+  text-transform: uppercase;
+  margin-bottom: 2.5rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.eyebrow::after {
+  content: '';
+  flex: 1;
+  height: .5px;
+  background: var(--border);
+}
+
+/* ── SCENE NOTE ── */
+.scene-note {
+  font-size: 11px;
+  color: var(--dimmer);
+  font-style: italic;
+  line-height: 1.9;
+  margin-bottom: 2.5rem;
+  padding-left: 1rem;
+  border-left: .5px solid var(--dimmer);
+}
+@media (min-width: 900px) {
+  .scene-note { font-size: 12px; }
+}
+
+/* ── MAIN MESSAGE ── */
+.question {
+  font-size: 17px;
+  line-height: 1.75;
+  color: var(--fg);
+  font-style: italic;
+  margin-bottom: 2.5rem;
+}
+@media (min-width: 900px) {
+  .question { font-size: 20px; margin-bottom: 3rem; }
+}
+
+/* ── STATUS TABLE ── */
+.confirm-table {
+  margin: 2rem 0 2.5rem;
+  border-top: .5px solid var(--border);
+}
+.confirm-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 11px 0;
+  border-bottom: .5px solid var(--dimmer);
+  gap: 24px;
+}
+.confirm-key {
+  font-size: 9px;
+  color: var(--dim);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.confirm-val {
+  font-size: 12px;
+  color: var(--fg);
+  text-align: right;
+  font-style: italic;
+}
+@media (min-width: 900px) {
+  .confirm-key { font-size: 10px; }
+  .confirm-val { font-size: 13px; }
+}
+
+/* ── DATE BLOCK ── */
+.date-block { margin: 3rem 0 2rem; }
+.date-big {
+  font-size: clamp(36px, 10vw, 56px);
+  font-weight: 700;
+  letter-spacing: .04em;
+  line-height: 1;
+  margin-bottom: .6rem;
+}
+.date-sub {
+  font-size: 11px;
+  color: var(--dim);
+  font-style: italic;
+  letter-spacing: .08em;
+}
+
+/* ── STAMP ── */
+.stamp-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 2rem 0 2.5rem;
+}
+.stamp {
+  border: .5px solid var(--border);
+  font-size: 9px;
+  letter-spacing: .18em;
+  padding: 6px 14px;
+  color: var(--dim);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.stamp-line { flex: 1; height: .5px; background: var(--border); }
+
+/* ── BLINK CURSOR ── */
+.cursor {
+  display: inline-block;
+  width: 1ch;
+  animation: blink 1.1s step-end infinite;
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+/* ── FINAL NOTE ── */
+.final-note {
+  font-size: 12px;
+  color: #333;
+  line-height: 2.1;
+  font-style: italic;
+  padding-top: 1.5rem;
+  border-top: .5px solid var(--dimmer);
+}
+.final-note a {
+  color: var(--dim);
+  text-decoration: none;
+  border-bottom: .5px solid var(--dimmer);
+  transition: color .2s, border-color .2s;
+}
+.final-note a:hover { color: var(--fg); border-color: var(--fg); }
+
+/* ── RIGHT PANEL ── */
+.right-panel { display: none; }
+@media (min-width: 900px) {
+  .right-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 3.5rem 3.5rem 5rem;
+    flex: 1;
+    min-width: 0;
+  }
+  .rp-quote {
+    font-size: 12px;
+    font-style: italic;
+    color: #222;
+    line-height: 2;
+    max-width: 260px;
+    padding-left: 1rem;
+    border-left: .5px solid #1a1a1a;
+  }
+  .rp-date {
+    margin-top: 3rem;
+    font-size: 9px;
+    letter-spacing: .2em;
+    color: #1a1a1a;
+    text-transform: uppercase;
+  }
+}
+
+/* ── WATERMARK ── */
+.watermark {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 2rem;
+  font-size: 9px;
+  letter-spacing: .2em;
+  color: #1a1a1a;
+  text-transform: uppercase;
+  pointer-events: none;
+  z-index: 10;
+}
+@media (min-width: 900px) {
+  .watermark { right: 3rem; }
+}
+
+/* ── FADE IN ── */
+.content {
+  animation: fadeUp .5s ease both;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── ARCHIVO (botón oculto) ── */
+.archivo-btn {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 2rem;
+  background: transparent;
+  border: none;
+  font-family: 'Courier Prime', monospace;
+  font-size: 9px;
+  letter-spacing: .15em;
+  color: #1c1c1c;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 0;
+  z-index: 20;
+  transition: color .3s;
+  -webkit-tap-highlight-color: transparent;
+}
+.archivo-btn:hover { color: #3a3a3a; }
+
+/* ── DRAWER ── */
+.drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.6);
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .4s ease;
+}
+.drawer-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: min(540px, 100vw);
+  height: 100vh;
+  background: var(--bg);
+  border-right: .5px solid var(--border);
+  z-index: 101;
+  overflow-y: auto;
+  transform: translateX(-100%);
+  transition: transform .4s cubic-bezier(.4,0,.2,1);
+  padding: 3.5rem 2rem 5rem;
+}
+.drawer.open {
+  transform: translateX(0);
+}
+@media (min-width: 600px) {
+  .drawer { padding: 4rem 3.5rem 6rem; }
+}
+
+.drawer-close {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: transparent;
+  border: none;
+  font-family: 'Courier Prime', monospace;
+  font-size: 9px;
+  letter-spacing: .18em;
+  color: var(--dimmer);
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 4px 0;
+  transition: color .2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.drawer-close:hover { color: var(--fg); }
+
+/* ── FORM SCREENS inside drawer ── */
+.screen { display: none; animation: fadeUp .35s ease both; }
+.screen.active { display: block; }
+
+/* ── PROGRESS (mobile) ── */
+.stage-bar {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 3rem;
+}
+@media (min-width: 900px) {
+  .stage-bar { display: none; }
+}
+.stage-pip {
+  height: 1px;
+  flex: 1;
+  background: var(--dimmer);
+  transition: background .5s;
+}
+.stage-pip.done   { background: var(--dim); }
+.stage-pip.active { background: var(--fg); }
+
+/* ── FORM QUESTION ── */
+.form-question {
+  font-size: 17px;
+  line-height: 1.75;
+  color: var(--fg);
+  font-style: italic;
+  margin-bottom: 2.5rem;
+}
+@media (min-width: 600px) {
+  .form-question { font-size: 20px; margin-bottom: 3rem; }
+}
+
+/* ── OPTIONS ── */
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 3rem;
+}
+
+.opt {
+  background: transparent;
+  border: .5px solid var(--border);
+  color: var(--accent);
+  font-family: 'Courier Prime', monospace;
+  font-size: 13px;
+  padding: 14px 18px;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .2s, color .2s, background .15s;
+  line-height: 1.55;
+  width: 100%;
+  -webkit-tap-highlight-color: transparent;
+  border-radius: 0;
+}
+@media (min-width: 600px) {
+  .opt { font-size: 14px; padding: 16px 20px; }
+  .opt:hover { border-color: #555; color: #ccc; background: #060606; }
+}
+.opt:active   { background: #0a0a0a; }
+.opt.selected { border-color: var(--fg); color: var(--fg); }
+
+/* ── NEXT BUTTON ── */
+.btn-next {
+  background: transparent;
+  border: .5px solid var(--border);
+  color: var(--dim);
+  font-family: 'Courier Prime', monospace;
+  font-size: 11px;
+  letter-spacing: .12em;
+  padding: 12px 28px;
+  cursor: pointer;
+  text-transform: lowercase;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s, border-color .2s, color .2s, transform .1s;
+  border-radius: 0;
+}
+.btn-next.visible      { opacity: 1; pointer-events: all; }
+.btn-next:hover        { border-color: var(--fg); color: var(--fg); }
+.btn-next:active       { transform: scale(.98); }
+
+/* ── CONFIRMATION (inside drawer) ── */
+.confirm-table-form {
+  margin: 2rem 0 2.5rem;
+  border-top: .5px solid var(--border);
+}
+
+.date-block-form { margin: 3rem 0 2rem; }
+.date-big-form {
+  font-size: clamp(32px, 9vw, 50px);
+  font-weight: 700;
+  letter-spacing: .04em;
+  line-height: 1;
+  margin-bottom: .6rem;
+}
+.date-sub-form {
+  font-size: 11px;
+  color: var(--dim);
+  font-style: italic;
+  letter-spacing: .08em;
+}
+
+.stamp-row-form {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 2rem 0 2.5rem;
+}
+
+.final-note-form {
+  font-size: 12px;
+  color: #333;
+  line-height: 2.1;
+  font-style: italic;
+  padding-top: 1.5rem;
+  border-top: .5px solid var(--dimmer);
+}
+.final-note-form em  { color: var(--dim); font-style: normal; letter-spacing: .05em; }
+.final-note-form a   { color: var(--dim); text-decoration: none; border-bottom: .5px solid var(--dimmer); transition: color .2s, border-color .2s; }
+.final-note-form a:hover { color: var(--fg); border-color: var(--fg); }
+</style>
+</head>
+<body>
+<div class="noise"></div>
+
+<!-- SIDEBAR (desktop) -->
+<aside class="sidebar">
+  <div class="sidebar-top">
+    <a href="https://instagram.com/ssan.der" target="_blank" style="color:inherit;text-decoration:none;">
+      <div class="sidebar-logo">TR4$H</div>
+    </a>
+  </div>
+  <div class="sidebar-bottom">
+    <a href="https://instagram.com/ssan.der" target="_blank" style="color:inherit;text-decoration:none;border-bottom:.5px solid #1a1a1a;">Sander</a><br>
+    06 · 06 · 2026
+  </div>
+</aside>
+
+<!-- MAIN COLUMN -->
+<div class="main">
+  <div class="shell">
+    <div class="content">
+
+      <div class="eyebrow">Sistema — consulta externa</div>
+
+      <div class="scene-note">(La sala de espera está vacía.<br>
+      Alguien dejó la luz encendida.)</div>
+
+      <div class="question">"La consulta está siendo preparada.<br>Volvemos el sábado."</div>
+
+      <div class="confirm-table">
+        <div class="confirm-row">
+          <span class="confirm-key">Estado del sistema</span>
+          <span class="confirm-val">en mantenimiento<span class="cursor">_</span></span>
+        </div>
+        <div class="confirm-row">
+          <span class="confirm-key">Motivo</span>
+          <span class="confirm-val">actualizaciones en curso</span>
+        </div>
+        <div class="confirm-row">
+          <span class="confirm-key">Próxima disponibilidad</span>
+          <span class="confirm-val">sábado</span>
+        </div>
+      </div>
+
+      <div class="date-block">
+        <div class="date-big">06 · 06 · 26</div>
+        <div class="date-sub">la consulta abre ese día</div>
+      </div>
+
+      <div class="stamp-row">
+        <div class="stamp">temporalmente cerrado</div>
+        <div class="stamp-line"></div>
+      </div>
+
+      <div class="final-note">
+        TR4$H / un proyecto escrito, producido y dirigido por Alessandro Jiménez<br>
+        Disponible el 6 de junio donde escuchas música.<br><br>
+        <a href="https://instagram.com/ssan.der" target="_blank">@ssan.der</a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- RIGHT PANEL -->
+<div class="right-panel">
+  <div>
+    <div class="rp-quote">
+      (La psicóloga está revisando los expedientes.<br>
+      Hay más casos de lo esperado.)
+    </div>
+    <div class="rp-date">TR4$H &nbsp;·&nbsp; 06.06.26</div>
+  </div>
+</div>
+
+<div class="watermark">TR4$H &nbsp;·&nbsp; 06.06.26</div>
+
+<!-- BOTÓN ARCHIVO (casi invisible, esquina inferior izquierda) -->
+<button class="archivo-btn" onclick="openDrawer()">archivo</button>
+
+<!-- DRAWER OVERLAY -->
+<div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
+
+<!-- DRAWER CON EL FORMULARIO -->
+<div class="drawer" id="drawer">
+  <button class="drawer-close" onclick="closeDrawer()">cerrar ×</button>
+
+  <!-- SCREEN 0 -->
+  <div id="s0" class="screen active">
+    <div class="eyebrow">Formulario de admisión</div>
+    <div class="scene-note">(El paciente toma asiento en la sala de espera.<br>La recepcionista desliza el formulario sin decir nada.)</div>
+    <div class="form-question">"¿Cuánto tiempo llevas evitando esto?"</div>
+    <div class="options">
+      <button class="opt" data-q="0" data-v="siempre">Siempre.</button>
+      <button class="opt" data-q="0" data-v="meses">Varios meses. O años. Ya perdí la cuenta.</button>
+      <button class="opt" data-q="0" data-v="reciente">Algo pasó recientemente.</button>
+      <button class="opt" data-q="0" data-v="nada">No estoy evitando nada.</button>
+    </div>
+    <button class="btn-next" id="next0" onclick="advance(1)">continuar &rarr;</button>
+  </div>
+
+  <!-- SCREEN 1 -->
+  <div id="s1" class="screen">
+    <div class="eyebrow">Formulario de admisión</div>
+    <div class="stage-bar">
+      <div class="stage-pip done"></div>
+      <div class="stage-pip active"></div>
+      <div class="stage-pip"></div>
+      <div class="stage-pip"></div>
+    </div>
+    <div class="form-question">"¿Cómo describirías lo que sientes la mayoría del tiempo?"</div>
+    <div class="options">
+      <button class="opt" data-q="1" data-v="ruido">Ruido constante. Nunca para.</button>
+      <button class="opt" data-q="1" data-v="vacio">Nada. Solo vacío.</button>
+      <button class="opt" data-q="1" data-v="peso">Algo pesado que no puedo nombrar.</button>
+      <button class="opt" data-q="1" data-v="normal">Normal. Estoy bien.</button>
+    </div>
+    <button class="btn-next" id="next1" onclick="advance(2)">continuar &rarr;</button>
+  </div>
+
+  <!-- SCREEN 2 -->
+  <div id="s2" class="screen">
+    <div class="eyebrow">Formulario de admisión</div>
+    <div class="stage-bar">
+      <div class="stage-pip done"></div>
+      <div class="stage-pip done"></div>
+      <div class="stage-pip active"></div>
+      <div class="stage-pip"></div>
+    </div>
+    <div class="form-question">"¿Hay voces que no son tuyas?"</div>
+    <div class="options">
+      <button class="opt" data-q="2" data-v="si_siempre">Sí. Todo el tiempo.</button>
+      <button class="opt" data-q="2" data-v="si_noche">Solo de noche.</button>
+      <button class="opt" data-q="2" data-v="si_pero">Sí, pero ya aprendí a ignorarlas.</button>
+      <button class="opt" data-q="2" data-v="no">No.</button>
+    </div>
+    <button class="btn-next" id="next2" onclick="advance(3)">continuar &rarr;</button>
+  </div>
+
+  <!-- SCREEN 3 -->
+  <div id="s3" class="screen">
+    <div class="eyebrow">Formulario de admisión</div>
+    <div class="stage-bar">
+      <div class="stage-pip done"></div>
+      <div class="stage-pip done"></div>
+      <div class="stage-pip done"></div>
+      <div class="stage-pip active"></div>
+    </div>
+    <div class="form-question">"¿Qué esperas de esta sesión?"</div>
+    <div class="options">
+      <button class="opt" data-q="3" data-v="respuestas">Respuestas. Necesito respuestas.</button>
+      <button class="opt" data-q="3" data-v="silencio">Solo quiero que pare el ruido un momento.</button>
+      <button class="opt" data-q="3" data-v="nada">Nada. Alguien me mandó.</button>
+      <button class="opt" data-q="3" data-v="ver">Ver qué pasa.</button>
+    </div>
+    <button class="btn-next" id="next3" onclick="advance(4)">confirmar cita &rarr;</button>
+  </div>
+
+  <!-- SCREEN 4 — CONFIRMACIÓN -->
+  <div id="s4" class="screen">
+    <div class="eyebrow">Confirmación de cita</div>
+    <div class="scene-note">(La recepcionista imprime la tarjeta.<br>La desliza por el mostrador sin mirarte.)</div>
+
+    <div class="confirm-table confirm-table-form">
+      <div class="confirm-row">
+        <span class="confirm-key">Estado</span>
+        <span class="confirm-val">admitido</span>
+      </div>
+      <div class="confirm-row">
+        <span class="confirm-key">Perfil</span>
+        <span class="confirm-val" id="perfil-val">—</span>
+      </div>
+      <div class="confirm-row">
+        <span class="confirm-key">Motivo de consulta</span>
+        <span class="confirm-val" id="motivo-val">—</span>
+      </div>
+      <div class="confirm-row">
+        <span class="confirm-key">Pronóstico</span>
+        <span class="confirm-val" id="pronostico-val">—</span>
+      </div>
+    </div>
+
+    <div class="date-block date-block-form">
+      <div class="date-big date-big-form">06 · 06 · 26</div>
+      <div class="date-sub date-sub-form">la consulta abre ese día</div>
+    </div>
+
+    <div class="stamp-row stamp-row-form">
+      <div class="stamp">cita confirmada</div>
+      <div class="stamp-line"></div>
+    </div>
+
+    <div class="final-note final-note-form">
+      TR4$H / un proyecto escrito, producido y dirigido por Alessandro Jiménez<br>
+      Disponible el 6 de junio donde escuchas música.<br><br>
+      <em>guarda esta fecha.</em>
+      <a href="https://www.youtube.com/watch?v=Eme3yupi8UI&list=RDEme3yupi8UI&start_radio=1">aquí hay algo para mientras</a>
+    </div>
+  </div>
+
+</div><!-- /drawer -->
+
+<script>
+const answers = {};
+
+const perfiles = {
+  siempre:  "evasión crónica",
+  meses:    "caso en desarrollo",
+  reciente: "trauma reciente",
+  nada:     "resistencia activa"
+};
+const motivos = {
+  ruido:   "ruido interno persistente",
+  vacio:   "disociación / anhedonia",
+  peso:    "angustia sin nombre",
+  normal:  "negación"
+};
+const pronosticos = {
+  respuestas: "búsqueda de cierre / alta motivación",
+  silencio:   "agotamiento crónico / requiere atención",
+  nada:       "derivado / resistencia moderada",
+  ver:        "ambivalente / potencial latente"
+};
+
+document.querySelectorAll('.opt').forEach(btn => {
+  btn.addEventListener('click', function() {
+    const q = this.dataset.q;
+    document.querySelectorAll(`.opt[data-q="${q}"]`).forEach(b => b.classList.remove('selected'));
+    this.classList.add('selected');
+    answers[q] = this.dataset.v;
+    const nb = document.getElementById('next' + q);
+    if (nb) nb.classList.add('visible');
+  });
+});
+
+function advance(to) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  if (to === 4) {
+    document.getElementById('perfil-val').textContent     = perfiles[answers[0]]    || '—';
+    document.getElementById('motivo-val').textContent     = motivos[answers[1]]     || '—';
+    document.getElementById('pronostico-val').textContent = pronosticos[answers[3]] || '—';
+  }
+  const next = document.getElementById('s' + to);
+  if (next) {
+    next.classList.add('active');
+    document.getElementById('drawer').scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
+function openDrawer() {
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('drawer-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDrawer() {
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('drawer-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+</script>
+</body>
+</html>
