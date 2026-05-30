@@ -71,6 +71,22 @@ function setQuote(step) {
   }, 300);
 }
 
+/* ── GRAIN: the old-TV static grows coarser/faster up to the last question (#s4);
+   the session (#s5) cuts the grain entirely (handled by body.session in CSS) ── */
+const GRAIN_PEAK_STEP = 4;    // #s4 — the last question, where the TV is worst
+const GRAIN = {
+  size:  [200, 640],          // px — fine → coarse/chunky (brightness stays flat)
+  speed: [1.2, 0.30]          // boil interval in seconds (lower = faster)
+};
+
+function setGrain(step) {
+  const t = Math.min(Math.max(step / GRAIN_PEAK_STEP, 0), 1);
+  const lerp = ([a, b]) => a + (b - a) * t;
+  const root = document.documentElement.style;
+  root.setProperty('--noise-size', Math.round(lerp(GRAIN.size)) + 'px');
+  root.setProperty('--noise-speed', lerp(GRAIN.speed).toFixed(2) + 's');
+}
+
 /* ── SCREEN NAVIGATION ── */
 function advance(to) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -80,17 +96,55 @@ function advance(to) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     updateSidebar(to);
     setQuote(to);
+    setGrain(to);
   }
 }
 
+/* ── LAST QUESTION → SESSION: CRT power-off cut, then the glitchy teaser ── */
+function enterSession() {
+  const tv = document.getElementById('tv-off');
+
+  // restart the overlay animation cleanly even if it ran before
+  if (tv) {
+    tv.classList.remove('run');
+    void tv.offsetWidth; // force reflow so the animation re-fires
+    tv.classList.add('run');
+  }
+
+  // swap to the session DURING the black hold (white line already gone, black still
+  // fully covering ~6%–78% of the 1.3s animation), so the change is hidden behind black;
+  // body.session kills the grain + arms the glitch
+  setTimeout(() => {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    const s5 = document.getElementById('s5');
+    if (s5) s5.classList.add('active');
+    document.body.classList.add('session');
+    updateSidebar(5);
+    setQuote(5);
+    window.scrollTo({ top: 0 });
+    // arranca el teaser solo (con sonido): seguimos dentro de la activación del
+    // clic en "entrar a la sesión", así el navegador no bloquea el play.
+    // controls sigue puesto como fallback si algún navegador igual lo bloquea.
+    if (teaser) {
+      teaser.currentTime = 0;
+      teaser.play().catch(() => {});
+    }
+  }, 850);
+
+  // tidy up the overlay once it has fully faded back out
+  setTimeout(() => { if (tv) tv.classList.remove('run'); }, 1350);
+}
+
 /* ── VIDEO → PRE-SAVE ── */
-const teaser     = document.getElementById('teaser');
-const presaveBtn = document.getElementById('btn-presave');
+const teaser      = document.getElementById('teaser');
+const presaveBtn  = document.getElementById('btn-presave');
 const presaveHint = document.getElementById('presave-hint');
+const presaveLinks = document.getElementById('presave-links');
 
 function revealPresave() {
-  if (presaveBtn)  presaveBtn.classList.add('visible');
-  if (presaveHint) presaveHint.classList.add('visible');
+  if (presaveBtn)   presaveBtn.classList.add('visible');
+  if (presaveHint)  presaveHint.classList.add('visible');
+  if (presaveLinks) presaveLinks.classList.add('visible');
 }
 
 if (teaser) {

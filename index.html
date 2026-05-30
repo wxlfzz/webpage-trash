@@ -40,6 +40,7 @@
 </head>
 <body>
 <div class="noise"></div>
+<div class="crt"></div>
 
 <!-- SIDEBAR (desktop) -->
 <aside class="sidebar">
@@ -98,8 +99,8 @@
       <div id="s1" class="screen">
         <div class="eyebrow">Admitido</div>
         <div class="welcome-big">Bienvenido,<br><span id="welcome-name">—</span>.</div>
-        <div class="scene-note">Recuerda que tu cita es el <strong>6 de junio</strong>.<br>No llegues tarde. No la has estado evitando por nada.</div>
-        <button class="btn-next visible" id="next1" onclick="advance(2)">pasar a consulta &rarr;</button>
+        <div class="scene-note">Antes de tu consulta, tenemos un par de preguntas...<br>Recuerda que tu cita es el <strong>6 de junio</strong>. No llegues tarde. No la has estado evitando por nada.</div>
+        <button class="btn-next visible" id="next1" onclick="advance(2)">empezar &rarr;</button>
       </div>
 
       <!-- SCREEN 2 — PREGUNTA 1 -->
@@ -153,7 +154,7 @@
           <button class="opt" data-q="2" data-v="depende">Depende de quién lo diga.</button>
           <button class="opt" data-q="2" data-v="nada">Ya no confío en nada.</button>
         </div>
-        <button class="btn-next" id="next4" onclick="advance(5)">entrar a la sesión &rarr;</button>
+        <button class="btn-next" id="next4" onclick="enterSession()">entrar a la sesión &rarr;</button>
       </div>
 
       <!-- SCREEN 5 — VIDEO + PRE-SAVE -->
@@ -172,6 +173,14 @@
           <a id="btn-presave" class="btn-presave" href="#REEMPLAZAR_CON_LINK_DE_PRESAVE" target="_blank" rel="noopener">
             guardar TR4$H &rarr;
           </a>
+          <div class="presave-links" id="presave-links">
+            <a class="presave-link" href="https://www.instagram.com/pxxrmusic?igsh=eDMxcHdueWt1djU%3D" target="_blank" rel="noopener">
+              ¿prefieres algo físico? escríbenos &rarr;
+            </a>
+            <a class="presave-link" href="https://www.instagram.com/ropitachuca?igsh=MTIyNGxkMHh4dTVhMg%3D%3D" target="_blank" rel="noopener">
+              sé el primero en escuchar TR4$H &rarr;
+            </a>
+          </div>
         </div>
 
         <div class="final-note">
@@ -197,6 +206,9 @@
 </div>
 
 <div class="watermark">TR4$H &nbsp;·&nbsp; 06.06.26</div>
+
+<!-- CRT power-off / cut overlay (last question → session) -->
+<div id="tv-off"></div>
 
 <script src="assets/js/main.js" defer></script>
 </body>

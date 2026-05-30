@@ -8,6 +8,10 @@
   --border: #4d4d4d;
   --accent: #b4b4b4;
   --col-w: 560px;
+  /* grain — JS ramps the speck SIZE up as the user advances (brightness stays flat) */
+  --noise-opacity: .06;
+  --noise-size: 200px;
+  --noise-speed: 1.2s;
 }
 
 html { background: var(--bg); }
@@ -141,13 +145,177 @@ body {
 /* ── NOISE OVERLAY ── */
 .noise {
   position: fixed;
-  inset: 0;
+  /* oversized so the animated jitter never exposes an edge */
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
   pointer-events: none;
   z-index: 0;
-  opacity: .025;
+  opacity: var(--noise-opacity);
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 200px;
+  background-size: var(--noise-size);
+  transition: background-size .8s ease, opacity .8s ease;
+  animation: grainBoil var(--noise-speed) steps(1) infinite;
+  will-change: transform;
 }
+
+/* film-grain "boil" — jitters the texture so it churns rather than sits still */
+@keyframes grainBoil {
+  0%   { transform: translate(0, 0); }
+  20%  { transform: translate(-6%, 4%); }
+  40%  { transform: translate(5%, -7%); }
+  60%  { transform: translate(-4%, -5%); }
+  80%  { transform: translate(7%, 6%); }
+  100% { transform: translate(0, 0); }
+}
+
+/* respect users who ask for less motion: keep the grain, drop the churn */
+@media (prefers-reduced-motion: reduce) {
+  .noise { animation: none; }
+}
+
+/* during the session the TV grain is cut — the teaser plays clean, only glitching */
+body.session .noise { opacity: 0; }
+
+/* ── CRT SCREEN: scanlines + vignette (sells the "tele vieja") ── */
+.crt {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(0,0,0,0)    0px,
+      rgba(0,0,0,0)    2px,
+      rgba(0,0,0,.16)  3px,
+      rgba(0,0,0,0)    4px
+    );
+  opacity: .55;
+  animation: crtFlicker 5s steps(1) infinite;
+}
+/* soft vignette + slight darkened edges, like a curved tube */
+.crt::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0) 55%, rgba(0,0,0,.55) 100%);
+}
+@keyframes crtFlicker {
+  0%, 97%, 100% { opacity: .55; }
+  98%           { opacity: .42; }
+  99%           { opacity: .6; }
+}
+
+/* ── CRT POWER-OFF / CUT (last question → session) ──
+   Two layers: a BLACK base that snaps in, holds (hiding the screen swap behind it),
+   then fades to reveal the session; and a WHITE line (::before) that flashes and
+   collapses to a dot on top of that black, so the "tube" goes dark — never the old screen. */
+#tv-off {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+  display: none;
+}
+#tv-off.run {
+  display: block;
+  animation: tvOffCover 1.3s ease forwards;
+}
+#tv-off::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  transform-origin: center;
+  box-shadow: 0 0 60px 20px rgba(255,255,255,.6);
+  opacity: 0;
+}
+#tv-off.run::before {
+  animation: crtOff 1.3s cubic-bezier(.5,0,.1,1) forwards;
+}
+/* black base: cover fast → hold while screens swap underneath → reveal the session */
+@keyframes tvOffCover {
+  0%   { opacity: 0; }
+  6%   { opacity: 1; }
+  78%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+/* white line: flash → collapse to a horizontal line → shrink to a dot → gone (black remains) */
+@keyframes crtOff {
+  0%   { opacity: 0; transform: scale(1, 1); }
+  5%   { opacity: 1; transform: scale(1, 1); }
+  28%  { opacity: 1; transform: scale(1, .006); }
+  42%  { opacity: 1; transform: scale(.035, .006); }
+  52%  { opacity: 0; transform: scale(.035, .006); }
+  100% { opacity: 0; transform: scale(.035, .006); }
+}
+
+/* ── SESSION GLITCH (#s5) ── */
+body.session #s5 .teaser {
+  animation: vidGlitch 3.6s steps(1) infinite;
+}
+/* occasional torn slices + horizontal jumps + signal tint, like a glitching feed */
+@keyframes vidGlitch {
+  0%, 90%, 100% { clip-path: inset(0 0 0 0); transform: translate(0,0);  filter: none; }
+  91% { clip-path: inset(18% 0 52% 0); transform: translate(-7px,0); filter: contrast(1.4) hue-rotate(18deg); }
+  92% { clip-path: inset(62% 0 12% 0); transform: translate(9px,0);  filter: contrast(1.2); }
+  93% { clip-path: inset(0 0 0 0);     transform: translate(0,0);    filter: none; }
+  94% { clip-path: inset(40% 0 34% 0); transform: translate(-5px,0); filter: invert(.08); }
+  95% { clip-path: inset(8% 0 80% 0);  transform: translate(6px,0); }
+  96% { clip-path: inset(0 0 0 0);     transform: translate(0,0);    filter: none; }
+}
+
+/* chromatic-aberration glitch on the session question text */
+body.session #s5 .question {
+  animation: textGlitch 3.6s steps(1) infinite;
+}
+@keyframes textGlitch {
+  0%, 88%, 100% { text-shadow: none; transform: translate(0,0); }
+  89% { text-shadow: -2px 0 #ff2d2d, 2px 0 #2dffff; transform: translate(2px,0); }
+  91% { text-shadow:  2px 0 #ff2d2d, -2px 0 #2dffff; transform: translate(-2px,0); }
+  93% { text-shadow: -1px 0 #ff2d2d, 1px 0 #2dffff; transform: translate(1px,0); }
+  95% { text-shadow: none; transform: translate(0,0); }
+}
+
+/* accessibility: no violent flash/glitch for reduced-motion users — fall back to a quick fade */
+@media (prefers-reduced-motion: reduce) {
+  /* keep the calm black cover/reveal, drop the flashing collapse */
+  #tv-off.run::before { animation: none; opacity: 0; }
+  body.session #s5 .teaser,
+  body.session #s5 .question,
+  .crt { animation: none; }
+}
+
+/* ── SESSION LAYOUT: the 3-column chrome drops away — only the teaser + the
+   "¿Qué opinas de esto?" question remain, centered on screen ── */
+body.session .sidebar,
+body.session .right-panel,
+body.session .watermark { display: none; }
+
+/* strip everything around the focal point: keep the question, the video
+   and (once it ends) the pre-save reveal */
+body.session #s5 .eyebrow,
+body.session #s5 .scene-note,
+body.session #s5 .final-note { display: none; }
+
+/* the former middle column becomes a single full-width, centered stage */
+body.session .main { align-items: center; }
+body.session .shell {
+  max-width: 760px;
+  border-right: none;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+body.session #s5,
+body.session #s5 .question,
+body.session #s5 .presave-wrap { text-align: center; }
+body.session #s5 .teaser { margin-left: auto; margin-right: auto; }
 
 .content { position: relative; z-index: 1; }
 
@@ -479,3 +647,26 @@ body {
 }
 .btn-presave:hover  { background: transparent; color: var(--fg); }
 .btn-presave:active { transform: scale(.98); }
+
+/* secondary CTAs under the pre-save button (físico / pre-escucha) */
+.presave-links {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.8rem;
+  opacity: 0;
+  transition: opacity .5s ease;
+}
+.presave-links.visible { opacity: 1; }
+.presave-link {
+  font-size: 11px;
+  letter-spacing: .06em;
+  color: var(--dim);
+  font-style: italic;
+  text-decoration: none;
+  border-bottom: .5px solid var(--dimmer);
+  padding-bottom: 2px;
+  transition: color .2s, border-color .2s;
+}
+.presave-link:hover { color: var(--fg); border-color: var(--fg); }
