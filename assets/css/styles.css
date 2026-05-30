@@ -1,0 +1,697 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #000;
+  --fg: #fff;
+  --dim: #999999;
+  --dimmer: #838383;
+  --border: #4d4d4d;
+  --accent: #b4b4b4;
+  --col-w: 560px;
+  /* grain — JS ramps the speck SIZE up as the user advances (brightness stays flat) */
+  --noise-opacity: .06;
+  --noise-size: 200px;
+  --noise-speed: 1.2s;
+}
+
+html { background: var(--bg); }
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: 'Courier Prime', 'Courier New', monospace;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  align-items: stretch;
+}
+
+/* ── LAYOUT ── */
+.sidebar {
+  display: none;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 0;
+}
+
+.shell {
+  width: 100%;
+  max-width: var(--col-w);
+  min-height: 100vh;
+  padding: 3.5rem 2rem 5rem;
+  position: relative;
+}
+
+/* Desktop layout */
+@media (min-width: 900px) {
+  body { align-items: stretch; }
+
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 260px;
+    min-height: 100vh;
+    padding: 3.5rem 2.5rem;
+    border-right: .5px solid var(--border);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    flex-shrink: 0;
+  }
+
+  .sidebar-top {}
+  .sidebar-logo {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    margin-bottom: 3rem;
+  }
+  .sidebar-label {
+    font-size: 9px;
+    letter-spacing: .2em;
+    color: var(--dim);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  .sidebar-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .sidebar-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 12px 0;
+    border-top: .5px solid var(--border);
+    opacity: .3;
+    transition: opacity .4s;
+  }
+  .sidebar-step:last-child { border-bottom: .5px solid var(--border); }
+  .sidebar-step.active { opacity: 1; }
+  .sidebar-step.done { opacity: .5; }
+  .step-num {
+    font-size: 9px;
+    color: var(--dim);
+    letter-spacing: .1em;
+    padding-top: 2px;
+    min-width: 18px;
+  }
+  .step-text {
+    font-size: 11px;
+    color: var(--fg);
+    font-style: italic;
+    line-height: 1.5;
+  }
+  .sidebar-bottom {
+    font-size: 9px;
+    color: var(--dimmer);
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    line-height: 2;
+  }
+
+  .main { border-left: none; }
+
+  .shell {
+    max-width: var(--col-w);
+    padding: 4rem 4rem 6rem;
+    border-right: .5px solid var(--border);
+  }
+
+  .right-panel {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 3.5rem 3rem;
+    border-left: none;
+  }
+}
+
+@media (min-width: 1200px) {
+  .right-panel {
+    padding: 3.5rem 4rem;
+  }
+}
+
+/* ── NOISE OVERLAY ── */
+.noise {
+  position: fixed;
+  /* oversized so the animated jitter never exposes an edge */
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: var(--noise-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: var(--noise-size);
+  transition: background-size .8s ease, opacity .8s ease;
+  animation: grainBoil var(--noise-speed) steps(1) infinite;
+  will-change: transform;
+}
+
+/* film-grain "boil" — jitters the texture so it churns rather than sits still */
+@keyframes grainBoil {
+  0%   { transform: translate(0, 0); }
+  20%  { transform: translate(-6%, 4%); }
+  40%  { transform: translate(5%, -7%); }
+  60%  { transform: translate(-4%, -5%); }
+  80%  { transform: translate(7%, 6%); }
+  100% { transform: translate(0, 0); }
+}
+
+/* respect users who ask for less motion: keep the grain, drop the churn */
+@media (prefers-reduced-motion: reduce) {
+  .noise { animation: none; }
+}
+
+/* during the session the TV grain is cut — the teaser plays clean, only glitching */
+body.session .noise { opacity: 0; }
+
+/* ── CRT SCREEN: scanlines + vignette (sells the "tele vieja") ── */
+.crt {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(0,0,0,0)    0px,
+      rgba(0,0,0,0)    2px,
+      rgba(0,0,0,.16)  3px,
+      rgba(0,0,0,0)    4px
+    );
+  opacity: .55;
+  animation: crtFlicker 5s steps(1) infinite;
+}
+/* soft vignette + slight darkened edges, like a curved tube */
+.crt::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0) 55%, rgba(0,0,0,.55) 100%);
+}
+@keyframes crtFlicker {
+  0%, 97%, 100% { opacity: .55; }
+  98%           { opacity: .42; }
+  99%           { opacity: .6; }
+}
+
+/* ── CRT POWER-OFF / CUT (last question → session) ──
+   Two layers: a BLACK base that snaps in, holds (hiding the screen swap behind it),
+   then fades to reveal the session; and a WHITE line (::before) that flashes and
+   collapses to a dot on top of that black, so the "tube" goes dark — never the old screen. */
+#tv-off {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+  display: none;
+}
+#tv-off.run {
+  display: block;
+  animation: tvOffCover 1.3s ease forwards;
+}
+#tv-off::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  transform-origin: center;
+  box-shadow: 0 0 60px 20px rgba(255,255,255,.6);
+  opacity: 0;
+}
+#tv-off.run::before {
+  animation: crtOff 1.3s cubic-bezier(.5,0,.1,1) forwards;
+}
+/* black base: cover fast → hold while screens swap underneath → reveal the session */
+@keyframes tvOffCover {
+  0%   { opacity: 0; }
+  6%   { opacity: 1; }
+  78%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+/* white line: flash → collapse to a horizontal line → shrink to a dot → gone (black remains) */
+@keyframes crtOff {
+  0%   { opacity: 0; transform: scale(1, 1); }
+  5%   { opacity: 1; transform: scale(1, 1); }
+  28%  { opacity: 1; transform: scale(1, .006); }
+  42%  { opacity: 1; transform: scale(.035, .006); }
+  52%  { opacity: 0; transform: scale(.035, .006); }
+  100% { opacity: 0; transform: scale(.035, .006); }
+}
+
+/* ── SESSION GLITCH (#s5) ── */
+body.session #s5 .teaser {
+  animation: vidGlitch 3.6s steps(1) infinite;
+}
+/* occasional torn slices + horizontal jumps + signal tint, like a glitching feed */
+@keyframes vidGlitch {
+  0%, 90%, 100% { clip-path: inset(0 0 0 0); transform: translate(0,0);  filter: none; }
+  91% { clip-path: inset(18% 0 52% 0); transform: translate(-7px,0); filter: contrast(1.4) hue-rotate(18deg); }
+  92% { clip-path: inset(62% 0 12% 0); transform: translate(9px,0);  filter: contrast(1.2); }
+  93% { clip-path: inset(0 0 0 0);     transform: translate(0,0);    filter: none; }
+  94% { clip-path: inset(40% 0 34% 0); transform: translate(-5px,0); filter: invert(.08); }
+  95% { clip-path: inset(8% 0 80% 0);  transform: translate(6px,0); }
+  96% { clip-path: inset(0 0 0 0);     transform: translate(0,0);    filter: none; }
+}
+
+/* chromatic-aberration glitch on the session question text */
+body.session #s5 .question {
+  animation: textGlitch 3.6s steps(1) infinite;
+}
+@keyframes textGlitch {
+  0%, 88%, 100% { text-shadow: none; transform: translate(0,0); }
+  89% { text-shadow: -2px 0 #ff2d2d, 2px 0 #2dffff; transform: translate(2px,0); }
+  91% { text-shadow:  2px 0 #ff2d2d, -2px 0 #2dffff; transform: translate(-2px,0); }
+  93% { text-shadow: -1px 0 #ff2d2d, 1px 0 #2dffff; transform: translate(1px,0); }
+  95% { text-shadow: none; transform: translate(0,0); }
+}
+
+/* accessibility: no violent flash/glitch for reduced-motion users — fall back to a quick fade */
+@media (prefers-reduced-motion: reduce) {
+  /* keep the calm black cover/reveal, drop the flashing collapse */
+  #tv-off.run::before { animation: none; opacity: 0; }
+  body.session #s5 .teaser,
+  body.session #s5 .question,
+  .crt { animation: none; }
+}
+
+/* ── SESSION LAYOUT: the 3-column chrome drops away — only the teaser + the
+   "¿Qué opinas de esto?" question remain, centered on screen ── */
+body.session .sidebar,
+body.session .right-panel,
+body.session .watermark { display: none; }
+
+/* strip everything around the focal point: keep the question, the video,
+   the pre-save reveal and the closing credits note */
+body.session #s5 .eyebrow,
+body.session #s5 .scene-note { display: none; }
+
+/* the former middle column becomes a single full-width, centered stage —
+   minimal padding so the teaser fills as much of the screen as possible */
+body.session .main { align-items: center; }
+body.session .shell {
+  max-width: 1100px;
+  border-right: none;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 1.5rem .75rem;
+}
+body.session #s5,
+body.session #s5 .question,
+body.session #s5 .presave-wrap { text-align: center; }
+
+/* big teaser, but capped so the whole stage (question · video · note · links)
+   fits in one viewport with no scroll */
+body.session #s5 .teaser {
+  width: 100%;
+  max-height: 52vh;
+  object-fit: contain;
+  margin: .8rem auto 1.1rem;
+}
+body.session #s5 .question { margin-bottom: 1rem; }
+
+/* closing note sits right under the video; tightened so it doesn't push
+   the links off-screen */
+body.session #s5 .final-note {
+  border-top: none;
+  padding-top: 0;
+  margin-bottom: 1.2rem;
+  line-height: 1.7;
+}
+body.session #s5 .presave-wrap { margin-bottom: 0; }
+body.session #s5 .presave-hint { margin-bottom: 1rem; }
+body.session #s5 .presave-links { margin-top: 1.2rem; gap: .7rem; }
+
+@media (min-width: 900px) {
+  body.session #s5 .teaser { max-height: 56vh; }
+  body.session #s5 .question { margin-bottom: 1.4rem; }
+}
+
+.content { position: relative; z-index: 1; }
+
+/* ── SCREENS ── */
+.screen { display: none; animation: fadeUp .35s ease both; }
+.screen.active { display: block; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── EYEBROW ── */
+.eyebrow {
+  font-size: 9px;
+  letter-spacing: .2em;
+  color: var(--dim);
+  text-transform: uppercase;
+  margin-bottom: 2.5rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.eyebrow::after {
+  content: '';
+  flex: 1;
+  height: .5px;
+  background: var(--border);
+}
+
+/* ── PROGRESS (mobile only) ── */
+.stage-bar {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 3rem;
+}
+@media (min-width: 900px) {
+  .stage-bar { display: none; }
+}
+.stage-pip {
+  height: 1px;
+  flex: 1;
+  background: var(--dimmer);
+  transition: background .5s;
+}
+.stage-pip.done   { background: var(--dim); }
+.stage-pip.active { background: var(--fg); }
+
+/* ── SCENE NOTE ── */
+.scene-note {
+  font-size: 11px;
+  color: var(--dimmer);
+  font-style: italic;
+  line-height: 1.9;
+  margin-bottom: 2.5rem;
+  padding-left: 1rem;
+  border-left: .5px solid var(--dimmer);
+}
+@media (min-width: 900px) {
+  .scene-note { font-size: 12px; }
+}
+
+/* ── QUESTION ── */
+.question {
+  font-size: 17px;
+  line-height: 1.75;
+  color: var(--fg);
+  font-style: italic;
+  margin-bottom: 2.5rem;
+}
+@media (min-width: 900px) {
+  .question { font-size: 20px; margin-bottom: 3rem; }
+}
+
+/* ── OPTIONS ── */
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 3rem;
+}
+
+.opt {
+  background: transparent;
+  border: .5px solid var(--border);
+  color: var(--accent);
+  font-family: 'Courier Prime', monospace;
+  font-size: 13px;
+  padding: 14px 18px;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .2s, color .2s, background .15s;
+  line-height: 1.55;
+  width: 100%;
+  -webkit-tap-highlight-color: transparent;
+  border-radius: 0;
+}
+@media (min-width: 900px) {
+  .opt {
+    font-size: 14px;
+    padding: 16px 20px;
+  }
+  .opt:hover { border-color: #555; color: #ccc; background: #060606; }
+}
+.opt:active   { background: #0a0a0a; }
+.opt.selected { border-color: var(--fg); color: var(--fg); }
+
+/* ── NEXT BUTTON ── */
+.btn-next {
+  background: transparent;
+  border: .5px solid var(--border);
+  color: var(--dim);
+  font-family: 'Courier Prime', monospace;
+  font-size: 11px;
+  letter-spacing: .12em;
+  padding: 12px 28px;
+  cursor: pointer;
+  text-transform: lowercase;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s, border-color .2s, color .2s, transform .1s;
+  border-radius: 0;
+}
+.btn-next.visible      { opacity: 1; pointer-events: all; }
+.btn-next:hover        { border-color: var(--fg); color: var(--fg); }
+.btn-next:active       { transform: scale(.98); }
+
+/* ── CONFIRMATION ── */
+.confirm-table {
+  margin: 2rem 0 2.5rem;
+  border-top: .5px solid var(--border);
+}
+.confirm-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 11px 0;
+  border-bottom: .5px solid var(--dimmer);
+  gap: 24px;
+}
+.confirm-key {
+  font-size: 9px;
+  color: var(--dim);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.confirm-val {
+  font-size: 12px;
+  color: var(--fg);
+  text-align: right;
+  font-style: italic;
+}
+@media (min-width: 900px) {
+  .confirm-key { font-size: 10px; }
+  .confirm-val { font-size: 13px; }
+}
+
+/* ── DATE BLOCK ── */
+.date-block { margin: 3rem 0 2rem; }
+.date-big {
+  font-size: clamp(36px, 10vw, 56px);
+  font-weight: 700;
+  letter-spacing: .04em;
+  line-height: 1;
+  margin-bottom: .6rem;
+}
+.date-sub {
+  font-size: 11px;
+  color: var(--dim);
+  font-style: italic;
+  letter-spacing: .08em;
+}
+
+/* ── STAMP ── */
+.stamp-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 2rem 0 2.5rem;
+}
+.stamp {
+  border: .5px solid var(--border);
+  font-size: 9px;
+  letter-spacing: .18em;
+  padding: 6px 14px;
+  color: var(--dim);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.stamp-line { flex: 1; height: .5px; background: var(--border); }
+
+/* ── FINAL NOTE ── */
+.final-note {
+  font-size: 12px;
+  color: #333;
+  line-height: 2.1;
+  font-style: italic;
+  padding-top: 1.5rem;
+  border-top: .5px solid var(--dimmer);
+}
+.final-note em  { color: var(--dim); font-style: normal; letter-spacing: .05em; }
+.final-note a   { color: var(--dim); text-decoration: none; border-bottom: .5px solid var(--dimmer); transition: color .2s, border-color .2s; }
+.final-note a:hover { color: var(--fg); border-color: var(--fg); }
+
+/* ── RIGHT PANEL DECORATION (desktop) ── */
+.right-panel {
+  display: none;
+}
+@media (min-width: 900px) {
+  .right-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 3.5rem 3.5rem 5rem;
+  }
+  .rp-quote {
+    font-size: 12px;
+    font-style: italic;
+    color: #222;
+    line-height: 2;
+    max-width: 260px;
+    padding-left: 1rem;
+    border-left: .5px solid #1a1a1a;
+  }
+  .rp-date {
+    margin-top: 3rem;
+    font-size: 9px;
+    letter-spacing: .2em;
+    color: #1a1a1a;
+    text-transform: uppercase;
+  }
+}
+
+/* ── WATERMARK ── */
+.watermark {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 2rem;
+  font-size: 9px;
+  letter-spacing: .2em;
+  color: #1a1a1a;
+  text-transform: uppercase;
+  pointer-events: none;
+  z-index: 10;
+}
+@media (min-width: 900px) {
+  .watermark { right: 3rem; }
+}
+
+/* ── LINK RESET (logo / byline) ── */
+.link-plain { color: inherit; text-decoration: none; }
+.link-underline { color: inherit; text-decoration: none; border-bottom: .5px solid #1a1a1a; }
+
+/* ── NAME INPUT ── */
+.name-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: .5px solid var(--border);
+  color: var(--fg);
+  font-family: 'Courier Prime', monospace;
+  font-size: 18px;
+  font-style: italic;
+  padding: 12px 2px;
+  margin-bottom: 2.5rem;
+  -webkit-tap-highlight-color: transparent;
+}
+.name-input:focus { outline: none; border-color: var(--fg); }
+.name-input::placeholder { color: var(--dimmer); font-style: italic; }
+@media (min-width: 900px) {
+  .name-input { font-size: 20px; }
+}
+
+/* ── WELCOME ── */
+.welcome-big {
+  font-size: clamp(30px, 9vw, 48px);
+  font-weight: 700;
+  letter-spacing: .02em;
+  line-height: 1.12;
+  margin-bottom: 1.8rem;
+}
+
+/* ── TEASER VIDEO ── */
+.teaser {
+  width: 100%;
+  display: block;
+  background: #000;
+  border: .5px solid var(--border);
+  margin: 1rem 0 2.5rem;
+}
+
+/* ── PRE-SAVE ── */
+.presave-wrap { margin-bottom: 2.5rem; }
+.presave-hint {
+  font-size: 11px;
+  color: var(--dimmer);
+  font-style: italic;
+  letter-spacing: .04em;
+  margin-bottom: 1.2rem;
+  opacity: 0;
+  transition: opacity .5s ease;
+}
+.presave-hint.visible { opacity: 1; }
+
+.btn-presave {
+  display: inline-block;
+  background: var(--fg);
+  color: var(--bg);
+  border: .5px solid var(--fg);
+  font-family: 'Courier Prime', monospace;
+  font-size: 13px;
+  letter-spacing: .14em;
+  padding: 16px 32px;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: 0;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(6px);
+  transition: opacity .5s ease, transform .5s ease, background .2s, color .2s;
+}
+.btn-presave.visible {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateY(0);
+}
+.btn-presave:hover  { background: transparent; color: var(--fg); }
+.btn-presave:active { transform: scale(.98); }
+
+/* secondary CTAs under the pre-save button (físico / pre-escucha) */
+.presave-links {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.8rem;
+  opacity: 0;
+  transition: opacity .5s ease;
+}
+.presave-links.visible { opacity: 1; }
+.presave-link {
+  font-size: 11px;
+  letter-spacing: .06em;
+  color: var(--dim);
+  font-style: italic;
+  text-decoration: none;
+  border-bottom: .5px solid var(--dimmer);
+  padding-bottom: 2px;
+  transition: color .2s, border-color .2s;
+}
+.presave-link:hover { color: var(--fg); border-color: var(--fg); }
