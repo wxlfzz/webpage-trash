@@ -1,215 +1,322 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TR4$H — un proyecto de Alessandro Jiménez · 06.06.26</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TR4$H · 06.06.26</title>
 
-<!-- SEO -->
-<meta name="description" content="TR4$H — un proyecto escrito, producido y dirigido por Alessandro Jiménez. Completa el formulario de admisión. Disponible el 6 de junio donde escuchas música.">
-<meta name="author" content="Alessandro Jiménez (Sander)">
-<meta name="keywords" content="TR4$H, Sander, Alessandro Jiménez, música, álbum, 06.06.26">
-<meta name="theme-color" content="#000000">
-<meta name="robots" content="index, follow">
-<link rel="canonical" href="https://tr4sh.org/">
+    <!-- SEO -->
+    <meta
+      name="description"
+      content="TR4$H — un proyecto escrito, producido y dirigido por Alessandro Jiménez. Completa el formulario de admisión. Disponible el 6 de junio donde escuchas música."
+    />
+    <meta name="author" content="Alessandro Jiménez (Sander)" />
+    <meta
+      name="keywords"
+      content="TR4$H, Sander, Alessandro Jiménez, música, álbum, 06.06.26"
+    />
+    <meta name="theme-color" content="#000000" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://tr4sh.org/" />
 
-<!-- Favicon / icon -->
-<link rel="icon" type="image/png" href="assets/public/logo.png">
-<link rel="apple-touch-icon" href="assets/public/logo.png">
+    <!-- Favicon / icon -->
+    <link rel="icon" type="image/png" href="assets/public/logo.png" />
+    <link rel="apple-touch-icon" href="assets/public/logo.png" />
 
-<!-- Open Graph -->
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="TR4$H">
-<meta property="og:title" content="TR4$H — formulario de admisión">
-<meta property="og:description" content="Un proyecto escrito, producido y dirigido por Alessandro Jiménez. Disponible el 6 de junio donde escuchas música.">
-<meta property="og:url" content="https://tr4sh.org/">
-<meta property="og:image" content="https://tr4sh.org/assets/public/logo.png">
-<meta property="og:image:width" content="1920">
-<meta property="og:image:height" content="1080">
-<meta property="og:locale" content="es_ES">
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="TR4$H" />
+    <meta property="og:title" content="TR4$H — formulario de admisión" />
+    <meta
+      property="og:description"
+      content="Un proyecto escrito, producido y dirigido por Alessandro Jiménez. Disponible el 6 de junio donde escuchas música."
+    />
+    <meta property="og:url" content="https://tr4sh.org/" />
+    <meta
+      property="og:image"
+      content="https://tr4sh.org/assets/public/logo.png"
+    />
+    <meta property="og:image:width" content="1920" />
+    <meta property="og:image:height" content="1080" />
+    <meta property="og:locale" content="es_ES" />
 
-<!-- Twitter / X -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="TR4$H — formulario de admisión">
-<meta name="twitter:description" content="Un proyecto escrito, producido y dirigido por Alessandro Jiménez. Disponible el 6 de junio donde escuchas música.">
-<meta name="twitter:image" content="https://tr4sh.org/assets/public/logo.png">
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="TR4$H — formulario de admisión" />
+    <meta
+      name="twitter:description"
+      content="Un proyecto escrito, producido y dirigido por Alessandro Jiménez. Disponible el 6 de junio donde escuchas música."
+    />
+    <meta
+      name="twitter:image"
+      content="https://tr4sh.org/assets/public/logo.png"
+    />
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/styles.css">
-</head>
-<body>
-<div class="noise"></div>
-<div class="crt"></div>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="assets/css/styles.css" />
+  </head>
+  <body>
+    <div class="noise"></div>
+    <div class="crt"></div>
 
-<!-- SIDEBAR (desktop) -->
-<aside class="sidebar">
-  <div class="sidebar-top">
-    <a href="https://instagram.com/ssan.der" target="_blank" class="link-plain"><div class="sidebar-logo">TR4$H</div></a>
-    <div class="sidebar-label">Formulario de admisión</div>
-    <div class="sidebar-steps" id="sidebar-steps">
-      <div class="sidebar-step active" data-step="0">
-        <span class="step-num">01</span>
-        <span class="step-text">Identifícate</span>
-      </div>
-      <div class="sidebar-step" data-step="1">
-        <span class="step-num">02</span>
-        <span class="step-text">Bienvenida</span>
-      </div>
-      <div class="sidebar-step" data-step="2">
-        <span class="step-num">03</span>
-        <span class="step-text">Evaluación inicial</span>
-      </div>
-      <div class="sidebar-step" data-step="3">
-        <span class="step-num">04</span>
-        <span class="step-text">Evaluación</span>
-      </div>
-      <div class="sidebar-step" data-step="4">
-        <span class="step-num">05</span>
-        <span class="step-text">Evaluación final</span>
-      </div>
-      <div class="sidebar-step" data-step="5">
-        <span class="step-num">—</span>
-        <span class="step-text">La sesión</span>
-      </div>
-    </div>
-  </div>
-  <div class="sidebar-bottom">
-    <a href="https://instagram.com/ssan.der" target="_blank" class="link-underline">Sander</a><br>
-    06 · 06 · 2026
-  </div>
-</aside>
-
-<!-- MAIN FORM COLUMN -->
-<div class="main">
-  <div class="shell">
-    <div class="content">
-
-      <!-- SCREEN 0 — NOMBRE -->
-      <div id="s0" class="screen active">
-        <div class="eyebrow">Formulario de admisión</div>
-        <div class="scene-note">(La recepcionista no levanta la mirada.<br>Desliza el formulario y espera.)</div>
-        <div class="question">"Antes de empezar, ¿cómo te llamas?"</div>
-        <input type="text" id="name-input" class="name-input" placeholder="Ingresa tu nombre"
-               autocomplete="off" autocapitalize="words" maxlength="40" aria-label="Ingresa tu nombre">
-        <button class="btn-next" id="next0" onclick="submitName()">continuar &rarr;</button>
-      </div>
-
-      <!-- SCREEN 1 — BIENVENIDA -->
-      <div id="s1" class="screen">
-        <div class="eyebrow">Admitido</div>
-        <div class="welcome-big">Bienvenido,<br><span id="welcome-name">—</span>.</div>
-        <div class="scene-note">Antes de tu consulta, tenemos un par de preguntas...<br>Recuerda que tu cita es el <strong>6 de junio</strong>. No llegues tarde. No la has estado evitando por nada.</div>
-        <button class="btn-next visible" id="next1" onclick="advance(2)">empezar &rarr;</button>
-      </div>
-
-      <!-- SCREEN 2 — PREGUNTA 1 -->
-      <div id="s2" class="screen">
-        <div class="eyebrow">Evaluación</div>
-        <div class="stage-bar">
-          <div class="stage-pip active"></div>
-          <div class="stage-pip"></div>
-          <div class="stage-pip"></div>
-        </div>
-        <div class="question">"Cierra los ojos un segundo. Cuando los abres, ¿qué seguía ahí?"</div>
-        <div class="options">
-          <button class="opt" data-q="0" data-v="oscuridad">La oscuridad.</button>
-          <button class="opt" data-q="0" data-v="voz">Una voz.</button>
-          <button class="opt" data-q="0" data-v="nadie">Nadie.</button>
-          <button class="opt" data-q="0" data-v="yo">Yo, igual que siempre.</button>
-        </div>
-        <button class="btn-next" id="next2" onclick="advance(3)">continuar &rarr;</button>
-      </div>
-
-      <!-- SCREEN 3 — PREGUNTA 2 -->
-      <div id="s3" class="screen">
-        <div class="eyebrow">Evaluación</div>
-        <div class="stage-bar">
-          <div class="stage-pip done"></div>
-          <div class="stage-pip active"></div>
-          <div class="stage-pip"></div>
-        </div>
-        <div class="question">"Si pudieras borrar un solo recuerdo, ¿cuál sería?"</div>
-        <div class="options">
-          <button class="opt" data-q="1" data-v="primero">El primero que se me vino a la mente.</button>
-          <button class="opt" data-q="1" data-v="ninguno">No borraría ninguno.</button>
-          <button class="opt" data-q="1" data-v="todos">Todos.</button>
-          <button class="opt" data-q="1" data-v="bloqueado">No me dejan recordarlo.</button>
-        </div>
-        <button class="btn-next" id="next3" onclick="advance(4)">continuar &rarr;</button>
-      </div>
-
-      <!-- SCREEN 4 — PREGUNTA 3 -->
-      <div id="s4" class="screen">
-        <div class="eyebrow">Evaluación</div>
-        <div class="stage-bar">
-          <div class="stage-pip done"></div>
-          <div class="stage-pip done"></div>
-          <div class="stage-pip active"></div>
-        </div>
-        <div class="question">"Última pregunta. ¿Confías en lo que estás a punto de escuchar?"</div>
-        <div class="options">
-          <button class="opt" data-q="2" data-v="si">Sí.</button>
-          <button class="opt" data-q="2" data-v="igual">No, pero igual lo voy a escuchar.</button>
-          <button class="opt" data-q="2" data-v="depende">Depende de quién lo diga.</button>
-          <button class="opt" data-q="2" data-v="nada">Ya no confío en nada.</button>
-        </div>
-        <button class="btn-next" id="next4" onclick="enterSession()">entrar a la sesión &rarr;</button>
-      </div>
-
-      <!-- SCREEN 5 — VIDEO + PRE-SAVE -->
-      <div id="s5" class="screen">
-        <div class="eyebrow">La sesión</div>
-        <div class="scene-note">(La psicóloga apaga la luz.<br>"Quiero que veas algo. Después me dices qué opinas.")</div>
-        <div class="question">"¿Qué opinas de esto?"</div>
-
-        <video id="teaser" class="teaser" controls playsinline preload="metadata" poster="assets/public/logo.png">
-          <source src="assets/public/teaser.mp4" type="video/mp4">
-          Tu navegador no puede reproducir el video.
-        </video>
-
-        <div class="presave-wrap">
-          <div class="presave-hint" id="presave-hint">la consulta termina aquí. lo demás depende de ti.</div>
-          <a id="btn-presave" class="btn-presave" href="#REEMPLAZAR_CON_LINK_DE_PRESAVE" target="_blank" rel="noopener">
-            guardar TR4$H &rarr;
-          </a>
-          <div class="presave-links" id="presave-links">
-            <a class="presave-link" href="https://www.instagram.com/pxxrmusic?igsh=eDMxcHdueWt1djU%3D" target="_blank" rel="noopener">
-              ¿prefieres algo físico? escríbenos &rarr;
-            </a>
-            <a class="presave-link" href="https://www.instagram.com/ropitachuca?igsh=MTIyNGxkMHh4dTVhMg%3D%3D" target="_blank" rel="noopener">
-              sé el primero en escuchar TR4$H &rarr;
-            </a>
+    <!-- SIDEBAR (desktop) -->
+    <aside class="sidebar">
+      <div class="sidebar-top">
+        <a
+          href="https://instagram.com/ssan.der"
+          target="_blank"
+          class="link-plain"
+          ><div class="sidebar-logo">TR4$H</div></a
+        >
+        <div class="sidebar-label">Formulario de admisión</div>
+        <div class="sidebar-steps" id="sidebar-steps">
+          <div class="sidebar-step active" data-step="0">
+            <span class="step-num">01</span>
+            <span class="step-text">Identifícate</span>
+          </div>
+          <div class="sidebar-step" data-step="1">
+            <span class="step-num">02</span>
+            <span class="step-text">Bienvenida</span>
+          </div>
+          <div class="sidebar-step" data-step="2">
+            <span class="step-num">03</span>
+            <span class="step-text">Evaluación inicial</span>
+          </div>
+          <div class="sidebar-step" data-step="3">
+            <span class="step-num">04</span>
+            <span class="step-text">Evaluación</span>
+          </div>
+          <div class="sidebar-step" data-step="4">
+            <span class="step-num">05</span>
+            <span class="step-text">Evaluación final</span>
+          </div>
+          <div class="sidebar-step" data-step="5">
+            <span class="step-num">—</span>
+            <span class="step-text">La sesión</span>
           </div>
         </div>
+      </div>
+      <div class="sidebar-bottom">
+        <a
+          href="https://instagram.com/ssan.der"
+          target="_blank"
+          class="link-underline"
+          >Sander</a
+        ><br />
+        06 · 06 · 2026
+      </div>
+    </aside>
 
-        <div class="final-note">
-          TR4$H / un proyecto escrito, producido y dirigido por Alessandro Jiménez<br>
-          Disponible el 6 de junio donde escuchas música.<br><br>
-          <em>guarda esta fecha.</em>
+    <!-- MAIN FORM COLUMN -->
+    <div class="main">
+      <div class="shell">
+        <div class="content">
+          <!-- SCREEN 0 — NOMBRE -->
+          <div id="s0" class="screen active">
+            <div class="eyebrow">Formulario de admisión</div>
+            <div class="scene-note">
+              (La recepcionista no levanta la mirada.<br />Desliza el formulario
+              y espera.)
+            </div>
+            <div class="question">"Antes de empezar, ¿cómo te llamas?"</div>
+            <input
+              type="text"
+              id="name-input"
+              class="name-input"
+              placeholder="Ingresa tu nombre"
+              autocomplete="off"
+              autocapitalize="words"
+              maxlength="40"
+              aria-label="Ingresa tu nombre"
+            />
+            <button class="btn-next" id="next0" onclick="submitName()">
+              continuar &rarr;
+            </button>
+          </div>
+
+          <!-- SCREEN 1 — BIENVENIDA -->
+          <div id="s1" class="screen">
+            <div class="eyebrow">Admitido</div>
+            <div class="welcome-big">
+              Bienvenido,<br /><span id="welcome-name">—</span>.
+            </div>
+            <div class="scene-note">
+              Antes de tu consulta, tenemos un par de preguntas...<br />Recuerda
+              que tu cita es el <strong>6 de junio</strong>. No llegues tarde.
+              No la has estado evitando por nada.
+            </div>
+            <button class="btn-next visible" id="next1" onclick="advance(2)">
+              empezar &rarr;
+            </button>
+          </div>
+
+          <!-- SCREEN 2 — PREGUNTA 1 -->
+          <div id="s2" class="screen">
+            <div class="eyebrow">Evaluación</div>
+            <div class="stage-bar">
+              <div class="stage-pip active"></div>
+              <div class="stage-pip"></div>
+              <div class="stage-pip"></div>
+            </div>
+            <div class="question">
+              "Cierra los ojos un segundo. Cuando los abres, ¿qué seguía ahí?"
+            </div>
+            <div class="options">
+              <button class="opt" data-q="0" data-v="oscuridad">
+                La oscuridad.
+              </button>
+              <button class="opt" data-q="0" data-v="voz">Una voz.</button>
+              <button class="opt" data-q="0" data-v="nadie">Nadie.</button>
+              <button class="opt" data-q="0" data-v="yo">
+                Yo, igual que siempre.
+              </button>
+            </div>
+            <button class="btn-next" id="next2" onclick="advance(3)">
+              continuar &rarr;
+            </button>
+          </div>
+
+          <!-- SCREEN 3 — PREGUNTA 2 -->
+          <div id="s3" class="screen">
+            <div class="eyebrow">Evaluación</div>
+            <div class="stage-bar">
+              <div class="stage-pip done"></div>
+              <div class="stage-pip active"></div>
+              <div class="stage-pip"></div>
+            </div>
+            <div class="question">
+              "Si pudieras borrar un solo recuerdo, ¿cuál sería?"
+            </div>
+            <div class="options">
+              <button class="opt" data-q="1" data-v="primero">
+                El primero que se me vino a la mente.
+              </button>
+              <button class="opt" data-q="1" data-v="ninguno">
+                No borraría ninguno.
+              </button>
+              <button class="opt" data-q="1" data-v="todos">Todos.</button>
+              <button class="opt" data-q="1" data-v="bloqueado">
+                No me dejan recordarlo.
+              </button>
+            </div>
+            <button class="btn-next" id="next3" onclick="advance(4)">
+              continuar &rarr;
+            </button>
+          </div>
+
+          <!-- SCREEN 4 — PREGUNTA 3 -->
+          <div id="s4" class="screen">
+            <div class="eyebrow">Evaluación</div>
+            <div class="stage-bar">
+              <div class="stage-pip done"></div>
+              <div class="stage-pip done"></div>
+              <div class="stage-pip active"></div>
+            </div>
+            <div class="question">
+              "Última pregunta. ¿Confías en lo que estás a punto de escuchar?"
+            </div>
+            <div class="options">
+              <button class="opt" data-q="2" data-v="si">Sí.</button>
+              <button class="opt" data-q="2" data-v="igual">
+                No, pero igual lo voy a escuchar.
+              </button>
+              <button class="opt" data-q="2" data-v="depende">
+                Depende de quién lo diga.
+              </button>
+              <button class="opt" data-q="2" data-v="nada">
+                Ya no confío en nada.
+              </button>
+            </div>
+            <button class="btn-next" id="next4" onclick="enterSession()">
+              entrar a la sesión &rarr;
+            </button>
+          </div>
+
+          <!-- SCREEN 5 — VIDEO + PRE-SAVE -->
+          <div id="s5" class="screen">
+            <div class="eyebrow">La sesión</div>
+            <div class="scene-note">
+              (La psicóloga apaga la luz.<br />"Quiero que veas algo. Después me
+              dices qué opinas.")
+            </div>
+            <div class="question">"¿Qué opinas de esto?"</div>
+
+            <video
+              id="teaser"
+              class="teaser"
+              controls
+              playsinline
+              preload="metadata"
+              poster="assets/public/logo.png"
+            >
+              <source src="assets/public/teaser.mp4" type="video/mp4" />
+              Tu navegador no puede reproducir el video.
+            </video>
+
+            <div class="final-note">
+              TR4$H / un proyecto escrito, producido y dirigido por Alessandro
+              Jiménez<br />
+              Disponible el 6 de junio donde escuchas música.<br />
+              <em>guarda esta fecha.</em>
+            </div>
+
+            <div class="presave-wrap">
+              <div class="presave-hint" id="presave-hint">
+                la consulta termina aquí. lo demás depende de ti.
+              </div>
+              <a
+                id="btn-presave"
+                class="btn-presave"
+                href="#REEMPLAZAR_CON_LINK_DE_PRESAVE"
+                target="_blank"
+                rel="noopener"
+              >
+                guardar TR4$H &rarr;
+              </a>
+              <div class="presave-links" id="presave-links">
+                <a
+                  class="presave-link"
+                  href="https://www.instagram.com/pxxrmusic?igsh=eDMxcHdueWt1djU%3D"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  ¿prefieres algo físico? escríbenos &rarr;
+                </a>
+                <a
+                  class="presave-link"
+                  href="https://www.instagram.com/ropitachuca?igsh=MTIyNGxkMHh4dTVhMg%3D%3D"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  sé el primero en escuchar TR4$H &rarr;
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-
     </div>
-  </div>
-</div>
 
-<!-- RIGHT PANEL (desktop decoration) -->
-<div class="right-panel">
-  <div>
-    <div class="rp-quote" id="rp-quote">
-      (El formulario lleva aquí desde antes de que llegaras.<br>
-      Como si ya te esperaran.)
+    <!-- RIGHT PANEL (desktop decoration) -->
+    <div class="right-panel">
+      <div>
+        <div class="rp-quote" id="rp-quote">
+          (El formulario lleva aquí desde antes de que llegaras.<br />
+          Como si ya te esperaran.)
+        </div>
+        <div class="rp-date">TR4$H &nbsp;·&nbsp; 06.06.26</div>
+      </div>
     </div>
-    <div class="rp-date"> TR4$H &nbsp;·&nbsp; 06.06.26</div>
-  </div>
-</div>
 
-<div class="watermark">TR4$H &nbsp;·&nbsp; 06.06.26</div>
+    <div class="watermark">TR4$H &nbsp;·&nbsp; 06.06.26</div>
 
-<!-- CRT power-off / cut overlay (last question → session) -->
-<div id="tv-off"></div>
+    <!-- CRT power-off / cut overlay (last question → session) -->
+    <div id="tv-off"></div>
 
-<script src="assets/js/main.js" defer></script>
-</body>
+    <script src="assets/js/main.js" defer></script>
+  </body>
 </html>

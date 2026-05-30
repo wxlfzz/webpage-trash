@@ -294,28 +294,53 @@ body.session .sidebar,
 body.session .right-panel,
 body.session .watermark { display: none; }
 
-/* strip everything around the focal point: keep the question, the video
-   and (once it ends) the pre-save reveal */
+/* strip everything around the focal point: keep the question, the video,
+   the pre-save reveal and the closing credits note */
 body.session #s5 .eyebrow,
-body.session #s5 .scene-note,
-body.session #s5 .final-note { display: none; }
+body.session #s5 .scene-note { display: none; }
 
-/* the former middle column becomes a single full-width, centered stage */
+/* the former middle column becomes a single full-width, centered stage —
+   minimal padding so the teaser fills as much of the screen as possible */
 body.session .main { align-items: center; }
 body.session .shell {
-  max-width: 760px;
+  max-width: 1100px;
   border-right: none;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding-top: 2rem;
-  padding-bottom: 2rem;
+  padding: 1.5rem .75rem;
 }
 body.session #s5,
 body.session #s5 .question,
 body.session #s5 .presave-wrap { text-align: center; }
-body.session #s5 .teaser { margin-left: auto; margin-right: auto; }
+
+/* big teaser, but capped so the whole stage (question · video · note · links)
+   fits in one viewport with no scroll */
+body.session #s5 .teaser {
+  width: 100%;
+  max-height: 52vh;
+  object-fit: contain;
+  margin: .8rem auto 1.1rem;
+}
+body.session #s5 .question { margin-bottom: 1rem; }
+
+/* closing note sits right under the video; tightened so it doesn't push
+   the links off-screen */
+body.session #s5 .final-note {
+  border-top: none;
+  padding-top: 0;
+  margin-bottom: 1.2rem;
+  line-height: 1.7;
+}
+body.session #s5 .presave-wrap { margin-bottom: 0; }
+body.session #s5 .presave-hint { margin-bottom: 1rem; }
+body.session #s5 .presave-links { margin-top: 1.2rem; gap: .7rem; }
+
+@media (min-width: 900px) {
+  body.session #s5 .teaser { max-height: 56vh; }
+  body.session #s5 .question { margin-bottom: 1.4rem; }
+}
 
 .content { position: relative; z-index: 1; }
 
