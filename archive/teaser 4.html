@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TR4$H</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #000;
+  --fg: #fff;
+  --dim: #999999;
+  --dimmer: #838383;
+  --border: #4d4d4d;
+}
+
+html, body {
+  background: var(--bg);
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  color: var(--fg);
+  font-family: 'Courier Prime', 'Courier New', monospace;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-font-smoothing: antialiased;
+}
+
+.noise {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: .03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px;
+}
+
+.scanlines {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,.08) 2px,
+    rgba(0,0,0,.08) 4px
+  );
+  opacity: 0;
+  transition: opacity .1s;
+}
+
+/* TV wrapper — el collapse va aquí, no en .content */
+.tv {
+  position: relative;
+  width: min(600px, 92vw);
+  z-index: 3;
+}
+
+/* Content nunca tiene animation propia — se controla con JS opacity */
+.content {
+  text-align: center;
+  padding: 0 1rem;
+  opacity: 0;
+  transition: opacity .5s ease;
+}
+.content.visible {
+  opacity: 1;
+}
+
+.eyebrow {
+  font-size: 9px;
+  letter-spacing: .22em;
+  color: var(--dimmer);
+  text-transform: uppercase;
+  margin-bottom: 3rem;
+}
+
+.main-text {
+  font-size: clamp(15px, 4vw, 20px);
+  font-style: italic;
+  line-height: 1.8;
+  color: var(--fg);
+  margin-bottom: 3.5rem;
+}
+
+.date-line {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 3.5rem;
+}
+.date-line::before,
+.date-line::after {
+  content: '';
+  flex: 1;
+  height: .5px;
+  background: var(--border);
+}
+.date-inner {
+  font-size: clamp(28px, 8vw, 44px);
+  font-weight: 700;
+  letter-spacing: .05em;
+  white-space: nowrap;
+}
+
+.sub-text {
+  font-size: 10px;
+  color: var(--dimmer);
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+
+.cursor {
+  display: inline-block;
+  width: 1ch;
+  animation: blink 1.1s step-end infinite;
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+/* ── GLITCH — aplicado al .tv, no al .content ── */
+@keyframes glitch-move {
+  0%   { transform: translate(0,0) skewX(0); }
+  20%  { transform: translate(-2px, 1px) skewX(.8deg); }
+  40%  { transform: translate(3px, -1px) skewX(-1.5deg); }
+  60%  { transform: translate(-1px, 2px) skewX(1.5deg); }
+  80%  { transform: translate(4px, -2px) skewX(-.8deg); }
+  100% { transform: translate(0,0) skewX(0); }
+}
+
+@keyframes rgb-shift {
+  0%   { filter: none; }
+  25%  { filter: drop-shadow(2px 0 0 red) drop-shadow(-2px 0 0 cyan); }
+  50%  { filter: drop-shadow(-3px 0 0 red) drop-shadow(3px 0 0 cyan); }
+  75%  { filter: drop-shadow(4px 0 0 red) drop-shadow(-4px 0 0 cyan); }
+  100% { filter: none; }
+}
+
+.tv.glitching {
+  animation: glitch-move .12s steps(1) infinite, rgb-shift .15s steps(1) infinite;
+}
+.tv.glitching ~ * .scanlines,
+.scanlines.glitch { opacity: .2; }
+
+.tv.glitching-heavy {
+  animation: glitch-move .055s steps(1) infinite, rgb-shift .065s steps(1) infinite;
+}
+
+/* ── TV COLLAPSE — sobre .tv entero ── */
+@keyframes tv-collapse {
+  0%   { transform: scaleY(1) scaleX(1); filter: brightness(1); }
+  35%  { transform: scaleY(.06) scaleX(1.05); filter: brightness(4); }
+  65%  { transform: scaleY(.008) scaleX(1.06); filter: brightness(10) saturate(0); }
+  78%  { transform: scaleY(.001) scaleX(1); filter: brightness(22); }
+  79%  { transform: scaleY(0) scaleX(0); opacity: 0; }
+  100% { transform: scaleY(0) scaleX(0); opacity: 0; }
+}
+
+.tv.collapsing {
+  animation: tv-collapse .42s cubic-bezier(.4,0,1,1) forwards !important;
+  transform-origin: center center;
+}
+
+/* ── OFF DOT ── */
+.off-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 3px;
+  height: 3px;
+  background: #fff;
+  border-radius: 50%;
+  opacity: 0;
+  box-shadow: 0 0 8px 2px #fff, 0 0 20px 6px rgba(255,255,255,.3);
+}
+.off-dot.show {
+  animation: dot-fade 1s ease forwards;
+}
+@keyframes dot-fade {
+  0%   { opacity: 1; width: 3px; height: 3px; }
+  30%  { opacity: 1; width: 6px; height: 3px; }
+  100% { opacity: 0; width: 1px; height: 1px; }
+}
+
+/* ── FINAL SCREEN ── */
+.final-screen {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  opacity: 0;
+  pointer-events: none;
+}
+.final-screen.show {
+  pointer-events: all;
+  animation: finalIn .5s ease forwards;
+}
+@keyframes finalIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.final-title {
+  font-size: clamp(36px, 12vw, 72px);
+  font-weight: 400;
+  letter-spacing: .1em;
+  color: var(--fg);
+  opacity: 0;
+  font-style: italic;
+}
+.final-screen.show .final-title {
+  animation: titleIn .4s ease .25s both;
+}
+@keyframes titleIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.watermark {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 2rem;
+  font-size: 9px;
+  letter-spacing: .2em;
+  color: #1a1a1a;
+  text-transform: uppercase;
+  pointer-events: none;
+  z-index: 10;
+}
+</style>
+</head>
+<body>
+<div class="noise"></div>
+<div class="scanlines" id="scanlines"></div>
+
+<div class="tv" id="tv">
+  <div class="content" id="content">
+    <div class="eyebrow">TR4$H — sesión en curso<span class="cursor">_</span></div>
+    <div class="main-text">
+      "Mañana empiezan las evaluaciones"
+    </div>
+    <div class="date-line">
+      <div class="date-inner">06 · 06 · 26</div>
+    </div>
+    <div class="sub-text">el lugar y los detalles de tu consulta serán publicados durante el día</div>
+  </div>
+  <div class="off-dot" id="offDot"></div>
+</div>
+
+<div class="final-screen" id="finalScreen">
+  <div class="final-title">TR4$H</div>
+</div>
+
+<div class="watermark">TR4$H &nbsp;·&nbsp; 06.06.26</div>
+
+<script>
+const tv       = document.getElementById('tv');
+const content  = document.getElementById('content');
+const scanlines = document.getElementById('scanlines');
+const offDot   = document.getElementById('offDot');
+const finalScreen = document.getElementById('finalScreen');
+
+// Fade in content
+setTimeout(() => content.classList.add('visible'), 300);
+
+function runTvOff() {
+  // Mild glitch
+  tv.classList.add('glitching');
+  scanlines.style.opacity = '.2';
+
+  // Heavy glitch
+  setTimeout(() => {
+    tv.classList.remove('glitching');
+    tv.classList.add('glitching-heavy');
+    scanlines.style.opacity = '.45';
+  }, 900);
+
+  // Collapse — se aplica directo al .tv, el texto sigue visible hasta el último frame
+  setTimeout(() => {
+    tv.classList.remove('glitching-heavy');
+    tv.classList.add('collapsing');
+    scanlines.style.opacity = '0';
+  }, 1600);
+
+  // Off dot
+  setTimeout(() => {
+    offDot.classList.add('show');
+  }, 2000);
+
+  // Pantalla final
+  setTimeout(() => {
+    finalScreen.classList.add('show');
+  }, 2700);
+}
+
+setTimeout(runTvOff, 4000);
+</script>
+</body>
+</html>
