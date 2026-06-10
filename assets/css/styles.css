@@ -558,6 +558,17 @@ img:not(.hero-img):not(.presave-bg) {
   .split-img { height: 50vh; }
 }
 
+/* Video animación CDs */
+.fullwidth-photo .cd-video {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 1;
+  display: block;
+  margin: 0 auto;
+}
+
 /* ===== IFRAME RESPONSIVE ===== */
 .video-ph iframe {
   width: 100%;
