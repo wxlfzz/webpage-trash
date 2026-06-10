@@ -206,6 +206,15 @@
 </footer>
 
 <script>
+// Forzar autoplay en iOS
+const heroVideo = document.querySelector('.hero-img');
+if (heroVideo) {
+  heroVideo.play().catch(() => {
+    document.addEventListener('touchstart', () => {
+      heroVideo.play();
+    }, { once: true });
+  });
+}
 const obs = new IntersectionObserver(entries => {
   entries.forEach(e => {
     if (e.isIntersecting) {
